@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ভিডিও হাব</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff;--bg2:#f2f2f2;--tx:#0f0f0f;--tx2:#606060;--ln:#e5e5e5;--ac:#e11d2e;--card:#fff}
+:root[data-theme=dark]{--bg:#0f0f0f;--bg2:#272727;--tx:#f1f1f1;--tx2:#aaa;--ln:#303030;--card:#0f0f0f}
+*{box-sizing:border-box;margin:0}
+body{font-family:'Hind Siliguri',system-ui,sans-serif;background:var(--bg);color:var(--tx)}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+header{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;padding:8px 14px;background:var(--bg);border-bottom:1px solid var(--ln)}
+.logo{display:flex;align-items:center;gap:6px;font-weight:700;font-size:20px;white-space:nowrap}
+.logo i{width:30px;height:21px;border-radius:6px;background:var(--ac);position:relative}
+.logo i:after{content:"";position:absolute;left:12px;top:5px;border:5.5px solid transparent;border-left:9px solid #fff;border-right:0}
+.search{flex:1;max-width:560px;margin:0 auto;display:flex}
+.search input{flex:1;min-width:0;padding:8px 16px;border:1px solid var(--ln);border-radius:20px 0 0 20px;background:var(--bg);color:var(--tx);font:inherit;outline:0}
+.search input:focus{border-color:#3b82f6}
+.search span{padding:8px 16px;border:1px solid var(--ln);border-left:0;border-radius:0 20px 20px 0;background:var(--bg2)}
+.ib{width:38px;height:38px;border-radius:50%;font-size:18px;flex:none}
+.ib:hover{background:var(--bg2)}
+.chips{position:sticky;top:55px;z-index:15;display:flex;gap:8px;padding:10px 14px;overflow-x:auto;background:var(--bg);scrollbar-width:none}
+.chip{padding:6px 14px;border-radius:8px;background:var(--bg2);white-space:nowrap;font-size:14px;font-weight:500}
+.chip.on{background:var(--tx);color:var(--bg)}
+main{padding:14px;max-width:1700px;margin:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:22px 14px}
+.card{cursor:pointer;display:block;text-align:left;width:100%}
+.th{position:relative;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:var(--bg2)}
+.th img{width:100%;height:100%;object-fit:cover;transition:transform .25s}
+.card:hover .th img{transform:scale(1.04)}
+.meta{padding:10px 2px;display:flex;gap:10px}
+.av{width:36px;height:36px;border-radius:50%;background:var(--ac);color:#fff;display:grid;place-items:center;font-weight:600;flex:none}
+.t{font-weight:600;font-size:15px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.s{color:var(--tx2);font-size:13px;margin-top:2px}
+.msg{text-align:center;color:var(--tx2);padding:60px 16px;line-height:1.8}
+.msg b{color:var(--tx)}
+.sk{aspect-ratio:16/9;border-radius:12px;background:linear-gradient(90deg,var(--bg2),var(--ln),var(--bg2));background-size:200% 100%;animation:sh 1.2s infinite}
+@keyframes sh{to{background-position:-200% 0}}
+/* player */
+#watch{position:fixed;inset:0;z-index:40;background:var(--bg);overflow-y:auto;display:none}
+#watch.on{display:block}
+.wbar{position:sticky;top:0;z-index:2;background:var(--bg);padding:6px 10px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--ln)}
+.wrap{max-width:1500px;margin:auto;padding:14px;display:grid;gap:20px;grid-template-columns:1fr}
+.pl{aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden}
+.pl iframe{width:100%;height:100%;border:0}
+.wt{font-size:20px;font-weight:700;margin:12px 0 6px;line-height:1.4}
+.rel .card{display:flex;gap:10px;margin-bottom:12px}
+.rel .th{width:168px;flex:none;border-radius:8px}
+.rel .meta{padding:0}
+.ac{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.btn{padding:8px 16px;border-radius:20px;background:var(--bg2);font-weight:500;font-size:14px;text-decoration:none;color:var(--tx)}
+@media(min-width:1000px){.wrap{grid-template-columns:minmax(0,1fr) 400px}}
+@media(max-width:600px){.logo span{display:none}main{padding:10px}.wrap{padding:0 0 14px}.wrap>div{padding:0 12px}.wrap .pl{border-radius:0}.rel .th{width:140px}}
+/* settings */
+#set{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.55);display:none;place-items:center;padding:16px}
+#set.on{display:grid}
+.box{background:var(--bg);border-radius:16px;padding:20px;width:100%;max-width:520px;line-height:1.7}
+.box h3{margin-bottom:8px}.box p{font-size:13px;color:var(--tx2);margin-bottom:10px}
+.box input{width:100%;padding:10px 12px;border:1px solid var(--ln);border-radius:10px;background:var(--bg);color:var(--tx);font:inherit}
+.box .row{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+.pri{background:var(--ac);color:#fff}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><i></i><span>ভিডিও হাব</span></div>
+  <div class="search"><input id="q" type="search" placeholder="ভিডিও খুঁজুন..."><span>🔍</span></div>
+  <button class="ib" id="rf" title="রিফ্রেশ">⟳</button>
+  <button class="ib" id="th" title="থিম">🌓</button>
+  <button class="ib" id="gs" title="সেটিংস">⚙</button>
+</header>
+<div class="chips" id="chips"></div>
+<main><div class="grid" id="grid"></div><div class="msg" id="msg" hidden></div></main>
+
+<div id="watch">
+  <div class="wbar"><button class="ib" id="back" title="ফিরে যান">←</button><b>ভিডিও</b></div>
+  <div class="wrap">
+    <div><div class="pl" id="pl"></div><h1 class="wt" id="wt"></h1><div class="s" id="wc"></div>
+      <div class="ac"><a class="btn" id="yt" target="_blank" rel="noopener">YouTube-এ খুলুন ↗</a><button class="btn" id="sh">শেয়ার</button></div></div>
+    <div class="rel" id="rel"></div>
+  </div>
+</div>
+
+<div id="set"><div class="box">
+  <h3>গুগল শীট সংযোগ</h3>
+  <p>শীটটি "Anyone with the link – Viewer" করে শেয়ার করুন, তারপর লিংক এখানে দিন। শীটের কলাম: <b>লিংক | শিরোনাম | ক্যাটাগরি</b> (শিরোনাম ও ক্যাটাগরি ঐচ্ছিক)।</p>
+  <input id="url" placeholder="https://docs.google.com/spreadsheets/d/...">
+  <div class="row"><button class="btn" id="cx">বাতিল</button><button class="btn pri" id="sv">সংরক্ষণ</button></div>
+</div></div>
+
+<script>
+// স্থায়ীভাবে শীট সেট করতে এখানে লিংক বসান (তখন দর্শকদের কিছু করতে হবে না)
+const DEFAULT_SHEET_URL = "";
+
+const $ = id => document.getElementById(id);
+let videos = [], cat = "সব", term = "";
+const LS = {g:k=>{try{return localStorage.getItem(k)}catch(e){return null}}, s:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
+
+function setTheme(t){document.documentElement.dataset.theme=t;LS.s("vh_theme",t)}
+setTheme(LS.g("vh_theme")||(matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light"));
+$("th").onclick=()=>setTheme(document.documentElement.dataset.theme==="dark"?"light":"dark");
+
+function ytId(u){
+  const m=String(u).match(/(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/|v\/))([\w-]{11})/);
+  return m?m[1]:null;
+}
+function sheetCsvUrl(u){
+  if(!u) return "";
+  if(/output=csv|tqx=out:csv/.test(u)) return u;
+  const m=u.match(/\/spreadsheets\/d\/([\w-]+)/); if(!m) return u;
+  const g=u.match(/[#&?]gid=(\d+)/);
+  return `https://docs.google.com/spreadsheets/d/${m[1]}/gviz/tq?tqx=out:csv`+(g?`&gid=${g[1]}`:"");
+}
+function parseCSV(t){
+  const rows=[];let r=[],c="",q=false;
+  for(let i=0;i<t.length;i++){const ch=t[i];
+    if(q){if(ch=='"'){if(t[i+1]=='"'){c+='"';i++}else q=false}else c+=ch}
+    else if(ch=='"')q=true;
+    else if(ch==","){r.push(c);c=""}
+    else if(ch=="\n"||ch=="\r"){if(ch=="\r"&&t[i+1]=="\n")i++;r.push(c);rows.push(r);r=[];c=""}
+    else c+=ch}
+  if(c||r.length){r.push(c);rows.push(r)}
+  return rows;
+}
+function toVideos(rows){
+  const seen=new Set(),out=[];
+  rows.forEach(r=>{
+    const cells=r.map(x=>x.trim());
+    const i=cells.findIndex(x=>ytId(x)); if(i<0) return;
+    const id=ytId(cells[i]); if(seen.has(id)) return; seen.add(id);
+    const rest=cells.filter((x,j)=>j!==i&&x);
+    out.push({id,title:rest[0]||"",cat:rest[1]||""});
+  });
+  return out;
+}
+async function fillTitles(){
+  const need=videos.filter(v=>!v.title);
+  await Promise.all(need.map(async v=>{
+    const cached=LS.g("vh_t_"+v.id); if(cached){v.title=cached;return}
+    try{
+      const r=await fetch("https://noembed.com/embed?url="+encodeURIComponent("https://www.youtube.com/watch?v="+v.id));
+      const j=await r.json(); if(j.title){v.title=j.title;v.ch=j.author_name;LS.s("vh_t_"+v.id,j.title)}
+    }catch(e){}
+    if(!v.title) v.title="ভিডিও";
+  }));
+}
+function showMsg(h){$("grid").innerHTML="";$("msg").hidden=false;$("msg").innerHTML=h}
+async function load(force){
+  const raw=LS.g("vh_sheet")||DEFAULT_SHEET_URL, url=sheetCsvUrl(raw);
+  if(!url){showMsg("<b>এখনো কোনো গুগল শীট যুক্ত করা হয়নি।</b><br>উপরের ⚙ বাটনে ক্লিক করে শীটের লিংক দিন।");return}
+  $("msg").hidden=true;
+  $("grid").innerHTML=Array(8).fill('<div><div class="sk"></div></div>').join("");
+  try{
+    const res=await fetch(url+(url.includes("?")?"&":"?")+"_="+Date.now());
+    if(!res.ok) throw 0;
+    const txt=await res.text();
+    if(/^\s*<(!doctype|html)/i.test(txt)) throw 0;
+    videos=toVideos(parseCSV(txt));
+    await fillTitles();
+    LS.s("vh_cache",JSON.stringify(videos));
+  }catch(e){
+    const c=LS.g("vh_cache");
+    if(c){try{videos=JSON.parse(c)}catch(_){videos=[]}}
+    if(!videos.length){showMsg("<b>শীট লোড করা যায়নি।</b><br>শীটটি \"Anyone with the link – Viewer\" করা আছে কিনা এবং লিংকটি ঠিক আছে কিনা দেখুন।");return}
+  }
+  cat="সব";render();
+}
+function filtered(){
+  const t=term.toLowerCase();
+  return videos.filter(v=>(cat==="সব"||v.cat===cat)&&(!t||(v.title+" "+v.cat).toLowerCase().includes(t)));
+}
+function cardHTML(v){
+  const ch=v.cat||v.ch||"ভিডিও";
+  return `<button class="card" data-id="${v.id}"><div class="th"><img loading="lazy" src="https://img.youtube.com/vi/${v.id}/hqdefault.jpg" alt=""></div>
+  <div class="meta"><div class="av">${esc(ch[0])}</div><div><div class="t">${esc(v.title)}</div><div class="s">${esc(ch)}</div></div></div></button>`;
+}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function render(){
+  const cats=["সব",...new Set(videos.map(v=>v.cat).filter(Boolean))];
+  $("chips").style.display=cats.length>1?"flex":"none";
+  $("chips").innerHTML=cats.map(c=>`<button class="chip${c===cat?" on":""}" data-c="${esc(c)}">${esc(c)}</button>`).join("");
+  const list=filtered();
+  if(!list.length){showMsg("<b>কোনো ভিডিও পাওয়া যায়নি।</b>");return}
+  $("msg").hidden=true;
+  $("grid").innerHTML=list.map(cardHTML).join("");
+}
+$("chips").onclick=e=>{const b=e.target.closest(".chip");if(b){cat=b.dataset.c;render()}};
+$("q").oninput=e=>{term=e.target.value;render()};
+$("grid").onclick=e=>{const c=e.target.closest(".card");if(c)play(c.dataset.id)};
+$("rel").onclick=e=>{const c=e.target.closest(".card");if(c){play(c.dataset.id);$("watch").scrollTo(0,0)}};
+
+function play(id){
+  const v=videos.find(x=>x.id===id); if(!v) return;
+  $("pl").innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;fullscreen" allowfullscreen></iframe>`;
+  $("wt").textContent=v.title;$("wc").textContent=v.cat||v.ch||"";
+  $("yt").href="https://www.youtube.com/watch?v="+id;
+  $("rel").innerHTML=videos.filter(x=>x.id!==id).map(cardHTML).join("");
+  $("watch").classList.add("on");document.body.style.overflow="hidden";
+  $("sh").onclick=async()=>{const u="https://youtu.be/"+id;try{navigator.share?await navigator.share({title:v.title,url:u}):(await navigator.clipboard.writeText(u),alert("লিংক কপি হয়েছে"))}catch(e){}};
+}
+function closeWatch(){$("watch").classList.remove("on");$("pl").innerHTML="";document.body.style.overflow=""}
+$("back").onclick=closeWatch;
+addEventListener("keydown",e=>{if(e.key==="Escape"){closeWatch();$("set").classList.remove("on")}});
+
+$("gs").onclick=()=>{$("url").value=LS.g("vh_sheet")||"";$("set").classList.add("on")};
+$("cx").onclick=()=>$("set").classList.remove("on");
+$("sv").onclick=()=>{LS.s("vh_sheet",$("url").value.trim());$("set").classList.remove("on");load()};
+$("rf").onclick=()=>load(true);
+load();
+</script>
+</body>
+</html>
